@@ -22,6 +22,7 @@ controller_base::controller_base():
   nh_private_.param<double>("PWM_RAD_E", params_.pwm_rad_e, 1.0);
   nh_private_.param<double>("PWM_RAD_A", params_.pwm_rad_a, 1.0);
   nh_private_.param<double>("PWM_RAD_R", params_.pwm_rad_r, 1.0);
+  nh_private_.param<double>("ALT_TOZ", params_.alt_toz, 20.0);
   nh_private_.param<double>("ALT_HZ", params_.alt_hz, 10.0);
   nh_private_.param<double>("TAU", params_.tau, 5.0);
   nh_private_.param<double>("COURSE_KP", params_.c_kp, 0.7329);
@@ -107,8 +108,6 @@ void controller_base::reconfigure_callback(rosplane::ControllerConfig &config, u
   params_.b_kp = config.BETA_KP;
   params_.b_kd = config.BETA_KD;
   params_.b_ki = config.BETA_KI;
-
-  params_.alt_hz = config.ALT_HZ;
 }
 
 void controller_base::convert_to_pwm(controller_base::output_s &output)
@@ -159,6 +158,23 @@ void controller_base::actuator_controls_publish(const ros::TimerEvent &)
       rosplane_msgs::Controller_Internals inners;
       inners.phi_c = output.phi_c;
       inners.theta_c = output.theta_c;
+      switch (output.current_zone)
+      {
+      case alt_zones::TAKE_OFF:
+        inners.alt_zone = inners.ZONE_TAKE_OFF;
+        break;
+      case alt_zones::CLIMB:
+        inners.alt_zone = inners.ZONE_CLIMB;
+        break;
+      case alt_zones::DESCEND:
+        inners.alt_zone = inners.ZONE_DESEND;
+        break;
+      case alt_zones::ALTITUDE_HOLD:
+        inners.alt_zone = inners.ZONE_ALTITUDE_HOLD;
+        break;
+      default:
+        break;
+      }
       inners.aux_valid = false;
       internals_pub_.publish(inners);
     }

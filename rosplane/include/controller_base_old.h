@@ -21,6 +21,14 @@
 namespace rosplane
 {
 
+enum class alt_zones
+{
+  TAKE_OFF,
+  CLIMB,
+  DESCEND,
+  ALTITUDE_HOLD
+};
+
 class controller_base
 {
 public:
@@ -54,11 +62,13 @@ protected:
     float delta_a;
     float delta_r;
     float delta_t;
+    alt_zones current_zone;
   };
 
   struct params_s
   {
     double alt_hz;           /**< altitude hold zone */
+    double alt_toz;          /**< altitude takeoff zone */
     double tau;
     double c_kp;
     double c_kd;

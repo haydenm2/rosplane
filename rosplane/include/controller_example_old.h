@@ -12,8 +12,7 @@ public:
   controller_example();
 private:
   virtual void control(const struct params_s &params, const struct input_s &input, struct output_s &output);
-
-  float h_c_sat;
+  alt_zones current_zone;
 
   float course_hold(float chi_c, float chi, float phi_ff, float r, const struct params_s &params, float Ts);
   float c_error_;
@@ -27,12 +26,17 @@ private:
   float p_error_;
   float p_integrator_;
 
+  float airspeed_with_pitch_hold(float Va_c, float Va, const struct params_s &params, float Ts);
+  float ap_error_;
+  float ap_integrator_;
+  float ap_differentiator_;
+
   float airspeed_with_throttle_hold(float Va_c, float Va, const struct params_s &params, float Ts);
   float at_error_;
   float at_integrator_;
   float at_differentiator_;
 
-  float altitude_hold(float h_c, float h, const struct params_s &params, float Ts);
+  float altitiude_hold(float h_c, float h, const struct params_s &params, float Ts);
   float a_error_;
   float a_integrator_;
   float a_differentiator_;
